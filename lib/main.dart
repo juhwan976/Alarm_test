@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'AlarmSettingPage.dart';
+import 'SecondPage.dart';
 
 void main() {
   runApp(MyApp());
@@ -34,23 +35,33 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _currentIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Container(
-          child: FlatButton(
-            child: Text('알람 설정 페이지 출력'),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) {
-                  return AlarmSettingPage();
-                }),
-              );
-            },
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          SecondPage(),
+          AlarmSettingPage(),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: '',
           ),
-        ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.alarm),
+            label: '',
+          ),
+        ],
+        currentIndex: _currentIndex,
+        onTap: (int index) {
+          _currentIndex = index;
+          setState(() {});
+        },
       ),
     );
   }

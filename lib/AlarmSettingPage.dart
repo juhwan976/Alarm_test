@@ -67,17 +67,19 @@ class _AlarmSettingPageState extends State<AlarmSettingPage> {
 
   void _timerCallBack() {
     DateTime _nowTime = DateTime.now();
+    DateTime _alarmTime = _targetTime;
     print('nowTime    : ' + _nowTime.toString());
     print('targetTIme : ' + _targetTime.toString());
+    print('alarmTime  : ' + _alarmTime.toString());
 
     _dateController.add(_targetTime.difference(_nowTime));
 
-    if (_nowTime.year == _targetTime.year &&
-        _nowTime.month == _targetTime.month &&
-        _nowTime.day == _targetTime.day &&
-        _nowTime.hour == _targetTime.hour &&
-        _nowTime.minute == _targetTime.minute &&
-        _nowTime.second == _targetTime.second) {
+    if (_nowTime.year == _alarmTime.year &&
+        _nowTime.month == _alarmTime.month &&
+        _nowTime.day == _alarmTime.day &&
+        _nowTime.hour == _alarmTime.hour &&
+        _nowTime.minute ==_alarmTime.minute &&
+        _nowTime.second == _alarmTime.second) {
       Navigator.push(
         context,
         MaterialPageRoute(
