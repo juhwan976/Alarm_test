@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'AlarmSettingPage.dart';
+import 'AlarmSettingPageTest.dart';
 import 'SecondPage.dart';
 
 void main() {
@@ -43,7 +44,8 @@ class _MyHomePageState extends State<MyHomePage> {
         index: _currentIndex,
         children: [
           SecondPage(),
-          AlarmSettingPage(),
+          //AlarmSettingPage(),
+          AlarmSettingPageTest(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
