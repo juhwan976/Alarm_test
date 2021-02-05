@@ -143,13 +143,13 @@ public final class R {
     public static final int workmanager_test_configuration=0x7f020003;
   }
   public static final class color {
-    public static final int notification_action_color_filter=0x7f030000;
-    public static final int notification_icon_bg_color=0x7f030001;
-    public static final int notification_material_background_media_default_color=0x7f030002;
-    public static final int primary_text_default_material_dark=0x7f030003;
-    public static final int ripple_material_light=0x7f030004;
-    public static final int secondary_text_default_material_dark=0x7f030005;
-    public static final int secondary_text_default_material_light=0x7f030006;
+    public static final int androidx_core_ripple_material_light=0x7f030000;
+    public static final int androidx_core_secondary_text_default_material_light=0x7f030001;
+    public static final int notification_action_color_filter=0x7f030002;
+    public static final int notification_icon_bg_color=0x7f030003;
+    public static final int notification_material_background_media_default_color=0x7f030004;
+    public static final int primary_text_default_material_dark=0x7f030005;
+    public static final int secondary_text_default_material_dark=0x7f030006;
   }
   public static final class dimen {
     public static final int compat_button_inset_horizontal_material=0x7f040000;

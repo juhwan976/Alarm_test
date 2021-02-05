@@ -78,7 +78,7 @@ class _AlarmSettingPageTestState extends State<AlarmSettingPageTest> {
       iOS: iOSPlatformChannelSpecifics,
     );
 
-    if (result) {
+    if (result??true) {
       flip
           .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()

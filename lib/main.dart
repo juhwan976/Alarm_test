@@ -3,8 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
+import 'package:workmanager/workmanager.dart';
 
 import 'AlarmSettingPageTest.dart';
 import 'SecondPage.dart';
@@ -12,6 +11,32 @@ import 'SecondPage.dart';
 void main() async {
   // needed if you intend to initialize in the `main` function
   WidgetsFlutterBinding.ensureInitialized();
+  /*
+  Workmanager.initialize(
+
+      // The top level function, aka callbackDispatcher
+      callbackDispatcher,
+
+      // If enabled it will post a notification whenever
+      // the task is running. Handy for debugging tasks
+      isInDebugMode: true);
+  // Periodic task registration
+  Workmanager.registerPeriodicTask(
+    "2",
+
+    //This is the value that will be
+    // returned in the callbackDispatcher
+    "simplePeriodicTask",
+
+    // When no frequency is provided
+    // the default 15 minutes is set.
+    // Minimum frequency is 15 min.
+    // Android will automatically change
+    // your frequency to 15 min
+    // if you have configured a lower frequency.
+    frequency: Duration(minutes: 15),
+  );
+   */
 
   runApp(MyApp());
 }
@@ -20,12 +45,13 @@ void main() async {
 void callbackDispatcher() {
   Workmanager.executeTask(
     (task, inputData) {
-      notificationInitialize();
+      /* */
       return Future.value(true);
     },
   );
 }
-
+*/
+/*
 void notificationInitialize() {
   // initialise the plugin of flutterlocalnotifications.
   FlutterLocalNotificationsPlugin flip = new FlutterLocalNotificationsPlugin();
@@ -95,7 +121,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
   bool isWork = false;
-  /*
+/*
   Future _dailyAtTimeNotification() async {
     final notiTitle = 'title';
     final notiDesc = 'description';
@@ -126,38 +152,16 @@ class _MyHomePageState extends State<MyHomePage> {
               AndroidFlutterLocalNotificationsPlugin>()
           ?.deleteNotificationChannel('id');
 
-      await flutterLocalNotificationsPlugin.zonedSchedule(
+      await flutterLocalNotificationsPlugin.show(
         0,
         notiTitle,
         notiDesc,
-        _setNotiTime(),
         detail,
-        androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-        UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.time,
       );
     }
   }
-
-  tz.TZDateTime _setNotiTime() {
-    tz.initializeTimeZones();
-    tz.setLocalLocation(tz.getLocation('Asia/Seoul'));
-
-    final now = tz.TZDateTime.now(tz.local);
-    var scheduledDate = tz.TZDateTime(
-      tz.local,
-      now.year,
-      now.month,
-      now.day,
-      now.hour,
-      now.minute,
-      now.second + 5,
-    );
-
-    return scheduledDate;
-  }
-
+*/
+  /*
   void _initSetting() async {
     final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     final initSettingsAndroid = AndroidInitializationSettings('app_icon');
@@ -173,48 +177,10 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     await flutterLocalNotificationsPlugin.initialize(
       initSettings,
-      onSelectNotification: selectNotification,
     );
   }
-
-  Future selectNotification(String payload) async {
-    if (payload != null) {
-      debugPrint('notification payload: $payload');
-    }
-    await Navigator.push(
-      context,
-      MaterialPageRoute<void>(builder: (context) => SecondPage()),
-    );
-  }
-
-  Future onDidReceiveLocalNotification(
-      int id, String title, String body, String payload) async {
-    // display a dialog with the notification details, tap ok to go to another page
-    print('hello');
-    showDialog(
-      context: context,
-      builder: (BuildContext context) => CupertinoAlertDialog(
-        title: Text(title),
-        content: Text(body),
-        actions: [
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            child: Text('Ok'),
-            onPressed: () async {
-              Navigator.of(context, rootNavigator: true).pop();
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SecondPage(),
-                ),
-              );
-            },
-          )
-        ],
-      ),
-    );
-  }
-
+   */
+/*
   Future _notification() async {
     final notiTitle = 'Test Title';
     final notiDesc = 'Test Desciption';
@@ -242,7 +208,7 @@ class _MyHomePageState extends State<MyHomePage> {
       iOS: ios,
     );
 
-    if (result) {
+    if (result??true) {
       flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
@@ -254,22 +220,9 @@ class _MyHomePageState extends State<MyHomePage> {
         notiDesc,
         detail,
       );
-
-      _showSecondPage();
     }
   }
-
-  _showSecondPage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (BuildContext context) {
-          return SecondPage();
-        },
-      ),
-    );
-  }
-   */
+*/
 
   @override
   initState() {
@@ -290,7 +243,6 @@ class _MyHomePageState extends State<MyHomePage> {
             body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                /*
                 FlatButton(
                   child: Text('백그라운드 작업 중지'),
                   onPressed: () {
@@ -308,13 +260,13 @@ class _MyHomePageState extends State<MyHomePage> {
                       ? null
                       : () {
                           Workmanager.initialize(
+                            // The top level function, aka callbackDispatcher
+                            callbackDispatcher,
 
-                              // The top level function, aka callbackDispatcher
-                              callbackDispatcher,
-
-                              // If enabled it will post a notification whenever
-                              // the task is running. Handy for debugging tasks
-                              isInDebugMode: false);
+                            // If enabled it will post a notification whenever
+                            // the task is running. Handy for debugging tasks
+                            isInDebugMode: true,
+                          );
                           // Periodic task registration
                           Workmanager.registerPeriodicTask(
                             "2",
@@ -339,17 +291,16 @@ class _MyHomePageState extends State<MyHomePage> {
                           );
                         },
                 ),
-                 */
                 /*
                 FlatButton(
                   child: Text('알림 for ios'),
                   onPressed: _dailyAtTimeNotification,
                 ),
+                */
                 FlatButton(
                   child: Text('알림 표시'),
                   onPressed: _notification,
                 ),
-                 */
               ],
             ),
           ),
