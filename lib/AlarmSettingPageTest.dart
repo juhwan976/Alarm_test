@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'AlarmInfo.dart';
 import 'AlarmPage.dart';
@@ -28,6 +29,76 @@ class _AlarmSettingPageTestState extends State<AlarmSettingPageTest> {
       alarmAtNext: false,
     ),
   ];
+
+  void _notificationInitialize(AlarmInfo _alarmInfo) {
+    // initialise the plugin of flutterlocalnotifications.
+    FlutterLocalNotificationsPlugin flip =
+        new FlutterLocalNotificationsPlugin();
+
+    // app_icon needs to be a added as a drawable
+    // resource to the Android head project.
+    var android = new AndroidInitializationSettings('@mipmap/ic_launcher');
+    var iOS = IOSInitializationSettings(
+      requestSoundPermission: false,
+      requestBadgePermission: false,
+      requestAlertPermission: false,
+    );
+
+    // initialise settings for both Android and iOS device.
+    var settings = new InitializationSettings(android: android, iOS: iOS);
+    flip.initialize(settings);
+    _showNotificationWithDefaultSound(flip, _alarmInfo);
+  }
+
+  Future _showNotificationWithDefaultSound(flip, AlarmInfo _alarmInfo) async {
+    // Show a notification after every 15 minute with the first
+    // appearance happening a minute after invoking the method
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+      'your channel id',
+      'your channel name',
+      'your channel description',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+
+    final result = await flip
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+
+    // initialise channel platform for both Android and iOS device.
+    var platformChannelSpecifics = new NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+      iOS: iOSPlatformChannelSpecifics,
+    );
+
+    if (result) {
+      flip
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.deleteNotificationChannel('id');
+      await flip.show(
+        0,
+        '버스 알림',
+        '버스도착 ' +
+            ((_alarmInfo.useHour)
+                ? _alarmInfo.beforeHour.toString() + ' 시간 '
+                : '') +
+            ((_alarmInfo.useMinute)
+                ? _alarmInfo.beforeMinute.toString() + ' 분 '
+                : '') +
+            '전입니다.',
+        platformChannelSpecifics,
+        payload: 'Default_Sound',
+      );
+    }
+  }
 
   Widget _buildPage() {
     return Container(
@@ -110,6 +181,8 @@ class _AlarmSettingPageTestState extends State<AlarmSettingPageTest> {
                                       .add(Duration(minutes: 2, seconds: 30));
                             } else {}
 
+                            //_notificationInitialize(_alarmList.elementAt(index - 1));
+
                             setState(() {});
                           },
                         ),
@@ -132,8 +205,9 @@ class _AlarmSettingPageTestState extends State<AlarmSettingPageTest> {
       DateTime _now = DateTime.now();
       DateTime _target = _alarmList.elementAt(index).arrival.subtract(
             Duration(
-                hours: _alarmList.elementAt(index).beforeHour,
-                minutes: _alarmList.elementAt(index).beforeMinute),
+              hours: _alarmList.elementAt(index).beforeHour,
+              minutes: _alarmList.elementAt(index).beforeMinute,
+            ),
           );
       print(_target);
 
@@ -155,6 +229,7 @@ class _AlarmSettingPageTestState extends State<AlarmSettingPageTest> {
             },
           ),
         );
+        _notificationInitialize(_alarmList.elementAt(index));
       } else if (flag) {
         break;
       }

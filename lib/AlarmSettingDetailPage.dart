@@ -137,17 +137,24 @@ class _AlarmSettingDetailPageState extends State<AlarmSettingDetailPage> {
       TextEditingController _displayMinController, AlarmInfo _alarmInfo) {
     List<Widget> _returnWidget = new List<Widget>();
 
-    _returnWidget.add(Container(
-      child: FlatButton(
-        child: Text('저장'),
-        onPressed: () {
-          _alarmInfo.beforeHour = int.parse(
-              (_displayHourController.text.length == 0) ? '0' : _displayHourController.text);
-          _alarmInfo.beforeMinute = int.parse((_displayMinController.text.length == 0) ? '0' : _displayMinController.text);
-          Navigator.pop(context, _alarmInfo);
-        },
+    _returnWidget.add(
+      Container(
+        child: FlatButton(
+          child: Text('저장'),
+          onPressed: () {
+            _alarmInfo.beforeHour = int.parse(
+                (_displayHourController.text.length == 0)
+                    ? '0'
+                    : _displayHourController.text);
+            _alarmInfo.beforeMinute = int.parse(
+                (_displayMinController.text.length == 0)
+                    ? '0'
+                    : _displayMinController.text);
+            Navigator.pop(context, _alarmInfo);
+          },
+        ),
       ),
-    ));
+    );
 
     return _returnWidget;
   }
