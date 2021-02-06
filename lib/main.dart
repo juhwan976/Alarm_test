@@ -1,12 +1,23 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 import 'package:workmanager/workmanager.dart';
+import 'package:http/http.dart' as http;
 
 import 'AlarmSettingPageTest.dart';
+import 'ClassStationInfo.dart';
 import 'SecondPage.dart';
+import 'StationListPage.dart';
+
+String dropdownValue = '검복리마운틴앞' ;
+List<String> SIstringList = [];
+var stationmap = Map<String, StationInfo>();
 
 void main() async {
   // needed if you intend to initialize in the `main` function
@@ -102,6 +113,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: MyHomePage(title: 'Flutter Alarm Demo'),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -121,6 +133,27 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
   bool isWork = false;
+
+  Future<String> getData() async {
+    List<StationInfo> dump = [];
+    List<String> SItemp = [];
+    var maptemp = Map<String, StationInfo>();
+    http.Response response = await http.get('https://openapi.gg.go.kr/BusStation?Type=json&pSize=10&KEY=1f28ac029b8a452889cbbcb715513122');
+    List<dynamic> jsonlist = json.decode(response.body)['BusStation'][1]['row'];
+    for(int a=0; a<jsonlist.length; a++){
+      StationInfo temp = StationInfo.fromJson(jsonlist[a]);
+      log("StationInfo: ${temp.STATION_NM_INFO}");
+      dump.add(temp);
+      SItemp.add(temp.STATION_NM_INFO);
+      maptemp[temp.STATION_NM_INFO] = temp;
+    }
+    setState(() {
+      stationmap = maptemp;
+      SIstringList = SItemp;
+      dropdownValue = SIstringList[0];
+    });
+    return response.body;
+  }
 /*
   Future _dailyAtTimeNotification() async {
     final notiTitle = 'title';
@@ -146,25 +179,48 @@ class _MyHomePageState extends State<MyHomePage> {
     var ios = IOSNotificationDetails();
     var detail = NotificationDetails(android: android, iOS: ios);
 
-    if (result) {
+    if (result??true) {
       flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           ?.deleteNotificationChannel('id');
 
-      await flutterLocalNotificationsPlugin.show(
+      await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
         notiTitle,
         notiDesc,
+        _setNotiTime(),
         detail,
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time,
       );
     }
   }
-*/
-  /*
+
+  tz.TZDateTime _setNotiTime() {
+    tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation('Asia/Seoul'));
+
+    final now = tz.TZDateTime.now(tz.local);
+    var scheduledDate = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      now.hour,
+      now.minute,
+      now.second + 10,
+    );
+
+    return scheduledDate;
+  }
+ */
+/*
   void _initSetting() async {
     final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    final initSettingsAndroid = AndroidInitializationSettings('app_icon');
+    final initSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
     final initSettingsIOS = IOSInitializationSettings(
       requestSoundPermission: false,
       requestBadgePermission: false,
@@ -179,7 +235,7 @@ class _MyHomePageState extends State<MyHomePage> {
       initSettings,
     );
   }
-   */
+*/
 /*
   Future _notification() async {
     final notiTitle = 'Test Title';
@@ -243,6 +299,7 @@ class _MyHomePageState extends State<MyHomePage> {
             body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                /*
                 FlatButton(
                   child: Text('백그라운드 작업 중지'),
                   onPressed: () {
@@ -291,20 +348,23 @@ class _MyHomePageState extends State<MyHomePage> {
                           );
                         },
                 ),
+                */
                 /*
                 FlatButton(
-                  child: Text('알림 for ios'),
+                  child: Text('zonedSchedule을 사용한 알림'),
                   onPressed: _dailyAtTimeNotification,
                 ),
                 */
+                /*
                 FlatButton(
                   child: Text('알림 표시'),
                   onPressed: _notification,
                 ),
+                */
               ],
             ),
           ),
-           */
+          */
           //AlarmSettingPage(),
           AlarmSettingPageTest(),
         ],
@@ -325,6 +385,19 @@ class _MyHomePageState extends State<MyHomePage> {
           _currentIndex = index;
           setState(() {});
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            await getData();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext context) {
+                  return StationListPage();
+                },
+              ),
+            );
+          }
       ),
     );
   }

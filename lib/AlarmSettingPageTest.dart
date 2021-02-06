@@ -8,6 +8,12 @@ import 'AlarmInfo.dart';
 import 'AlarmPage.dart';
 import 'AlarmSettingDetailPage.dart';
 
+List<AlarmInfo> _alarmList = new List<AlarmInfo>();
+
+void addAlarmInfoList(AlarmInfo alarmInfo){
+  _alarmList.add(alarmInfo);
+}
+
 class AlarmSettingPageTest extends StatefulWidget {
   const AlarmSettingPageTest({Key key}) : super(key: key);
 
@@ -16,19 +22,6 @@ class AlarmSettingPageTest extends StatefulWidget {
 
 class _AlarmSettingPageTestState extends State<AlarmSettingPageTest> {
   Timer _alarm;
-
-  List<AlarmInfo> _alarmList = [
-    AlarmInfo(
-      busNum: 8,
-      arrival: DateTime.now().add(Duration(minutes: 2, seconds: 30)),
-      useHour: true,
-      useMinute: true,
-      beforeHour: 0,
-      beforeMinute: 0,
-      enable: false,
-      alarmAtNext: false,
-    ),
-  ];
 
   void _notificationInitialize(AlarmInfo _alarmInfo) {
     // initialise the plugin of flutterlocalnotifications.
@@ -134,8 +127,7 @@ class _AlarmSettingPageTestState extends State<AlarmSettingPageTest> {
                           alignment: Alignment.centerLeft,
                           margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
                           child: Text(
-                            _alarmList.elementAt(index - 1).busNum.toString() +
-                                ' 번',
+                            _alarmList.elementAt(index - 1).busNum.toString(),
                             style: TextStyle(
                               fontSize: 30,
                             ),
@@ -178,7 +170,7 @@ class _AlarmSettingPageTestState extends State<AlarmSettingPageTest> {
                                   false;
                               _alarmList.elementAt(index - 1).arrival =
                                   DateTime.now()
-                                      .add(Duration(minutes: 2, seconds: 30));
+                                      .add(Duration(minutes: 6, seconds: 30));
                             } else {}
 
                             //_notificationInitialize(_alarmList.elementAt(index - 1));
@@ -236,6 +228,23 @@ class _AlarmSettingPageTestState extends State<AlarmSettingPageTest> {
     }
   }
 
+  List<Widget> _buildActions() {
+    List<Widget> _listWidget = new List<Widget>();
+
+    _listWidget.add(
+      Container(
+        child: FlatButton(
+          child: Icon(Icons.refresh_rounded),
+          onPressed: () {
+            setState((){});
+          },
+        ),
+      ),
+    );
+
+    return _listWidget;
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -262,6 +271,7 @@ class _AlarmSettingPageTestState extends State<AlarmSettingPageTest> {
       appBar: AppBar(
         title: Text('알람 설정 관리'),
         centerTitle: true,
+        actions: _buildActions(),
       ),
       body: _buildPage(),
     );

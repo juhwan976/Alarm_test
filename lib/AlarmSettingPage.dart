@@ -7,6 +7,10 @@ import 'AlarmInfo.dart';
 import 'AlarmPage.dart';
 import 'SecondPage.dart';
 
+/********************************************
+ * Not Use This File
+ ********************************************
+ */
 class AlarmSettingPage extends StatefulWidget {
   const AlarmSettingPage({Key key,}) : super(key: key);
 

@@ -24,6 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   shared_preferences: ^0.5.12+4
+  http: ^0.12.2
 
   # Use with the Workmanger class for background jobs headless execution.
   workmanager: ^0.2.3

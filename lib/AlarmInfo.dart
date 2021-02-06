@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 class AlarmInfo {
-  int busNum;
+  String busNum;
   DateTime arrival;
   bool useHour;
   bool useMinute;
